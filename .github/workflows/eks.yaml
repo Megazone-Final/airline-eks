@@ -1,0 +1,37 @@
+name: eks yaml file validate
+
+on:
+    pull_request:
+        branches: [main]
+    push:
+        branches: [main]
+
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: azure/setup-helm@v4
+
+            - name: Install kubeconform
+              run: |
+                  curl -L -o kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+                  tar -xzf kubeconform.tar.gz
+                  sudo mv kubeconform /usr/local/bin/
+
+            - name: Validate services
+              # 아래 예시
+              # chart = "services/auth-user-service/Chart.yaml"
+              # dir = "services/auth-user-service" dirname이 마지막값 경로 떼고 가져옴
+              # name = "auth-user-service" basename이 마지막값 이름만 가져옴
+              run: |
+                  for chart in services/*/Chart.yaml; do
+                    dir="$(dirname "$chart")" 
+                    name="$(basename "$dir")"
+                    helm lint "$dir"
+                    helm template "$name" "$dir" | kubeconform -strict -summary
+                  done
+
+            - name: Validate shared and platform
+              run: |
+                  find shared platform -type f \( -name "*.yaml" -o -name "*.yml" \) | xargs kubeconform -strict -summary -ignore-missing-schemas
