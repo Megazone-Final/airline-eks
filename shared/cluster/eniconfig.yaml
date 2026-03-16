@@ -1,0 +1,17 @@
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+  name: ap-northeast-2a         # 노드의 레이블이 'ap-northeast-2a'일 때 이 설정을 적용
+spec:
+  securityGroups: 
+    - sg-0472abaf23177e5de      # Pod에게 적용할 전용 보안 그룹
+  subnet: subnet-076d10c337fffd5a5 # Pod 전용 서브넷
+---
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+  name: ap-northeast-2c
+spec:
+  securityGroups: 
+    - sg-0472abaf23177e5de
+  subnet: subnet-096d99809a4b6d13f
