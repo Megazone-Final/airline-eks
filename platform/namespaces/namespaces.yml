@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+  labels:
+    Environment: prod
+    Team: Indiana-Zones
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: karpenter
+  labels:
+    Environment: prod
+    Team: Indiana-Zones
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    Environment: prod
+    Team: Indiana-Zones
+---
+apiVersion: v1
+kind : Namespace
+metadata:
+  name: svc-payment
+  labels:
+    Environment: prod
+    Team: Indiana-Zones
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: svc-flight
+  labels:
+    Environment: prod
+    Team: Indiana-Zones
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: svc-auth
+  labels:
+    Environment: prod
+    Team: Indiana-Zones
