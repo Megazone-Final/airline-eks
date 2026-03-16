@@ -1,0 +1,71 @@
+# EKS 클러스터 생성을 위한 eksctl 구성 파일 (v1alpha5 API 사용)
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-an2-airline-cluster
+  region: ap-northeast-2 
+  version: "1.31"             # 안정적인 최신 버전
+
+vpc:
+  id: "vpc-090acfb843096b5f1"
+  clusterEndpoints:
+    publicAccess: true        # 추후 WorkStation을 사용할 시 False
+    privateAccess: true       # 노드와 마스터 간 통신을 내부망(VPC)으로 처리 (보안 및 네트워크 지연 최소화)
+  subnets:
+    public:                   # 외부 통신(ALB, NAT Gateway 등)을 위한 서브넷
+      ap-northeast-2a: { id: "subnet-0344123271161539e" }
+      ap-northeast-2c: { id: "subnet-0f88b5ec554f57084" }
+    private:                  # 실제 워커 노드가 배치될 격리된 사설 서브넷 레이어
+      ap-northeast-2a: { id: "subnet-03e23c53cfcfa8845" } 
+      ap-northeast-2c: { id: "subnet-067252d8589e8dced" }
+
+managedNodeGroups:
+  - name: eks-an2-airline-nodegroup-test
+    instanceType: t3.medium
+    minSize: 1                # 가용성 확보를 위한 최소 노드 수
+    maxSize: 2                # 부하 발생 시 오토스케일링 최대치
+    desiredCapacity: 1        # 초기 배포 노드 수
+    subnets:                  # 노드를 프라이빗 서브넷에만 배치 (보안상 외부 노출 차단)
+      - "subnet-03e23c53cfcfa8845"
+      - "subnet-067252d8589e8dced"
+    securityGroups:
+      attachIDs: ["sg-0472abaf23177e5de"]
+    privateNetworking: true   # 노드에 퍼블릭 IP를 할당하지 않음 (NAT Gateway를 통한 아웃바운드만 허용)
+    iam:
+      withAddonPolicies:      # EKS 핵심 기능 운영을 위한 매니지드 정책 패키지 활성화
+        autoScaler: true      # 오토스케일러 권한
+        albIngress: true      # ALB 권한
+        cloudWatch: true      # 혹시 몰라 넣어둠
+        ebs: true             # EBS 볼륨 동적 프로비저닝 권한
+      attachPolicyARNs:       # 노드에 부여되는 권한 리스트
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy         # 노드가 EKS에 조인하기 위한 필수 정책
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy              # 네트워크 인터페이스(ENI) 관리 기본 정책
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly # ECR에서 이미지를 받아오기 위한 권한
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore      # SSM Session Manager 접속을 위한 필수 권한
+
+iam:
+  withOIDC: true              # IRSA를 위한 OIDC 공급자 생성
+  serviceAccounts:            # 파드 수준의 정밀한 권한 분리
+    - metadata:
+        name: ebs-csi-controller-sa # 스토리지 관리 파드 전용 계정 (권한 충돌 방지를 위함)
+        namespace: kube-system
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy # EBS 볼륨 생명주기 관리 권한
+    - metadata:
+        name: aws-node              # VPC CNI 네트워크 관리 파드 전용 계정
+        namespace: kube-system
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy # IP Prefix Delegation 수행을 위한 권한 (노드에서 사용 가능한 Pod 늘리기 위함)
+
+addons:
+  - name: vpc-cni             # AWS VPC 네트워킹 플러그인
+    configurationValues: |
+      env:
+        ENABLE_PREFIX_DELEGATION: "true"
+        WARM_PREFIX_TARGET: "1"
+        AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG: "true"
+        ENI_CONFIG_LABEL_DEF: "topology.kubernetes.io/zone"
+  - name: coredns             # 클러스터 내부 도메인 이름 풀이 서비스
+  - name: kube-proxy          # 네트워크 트래픽 라우팅 및 로드밸런싱 규칙 관리
+  - name: aws-ebs-csi-driver  # EBS 볼륨 마운트를 위한 드라이버
