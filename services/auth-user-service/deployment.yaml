@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth
-  namespace: auth
+  namespace: airline-auth
   labels:
     app: auth
 spec:
@@ -20,7 +20,10 @@ spec:
         - name: auth
           image: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/auth:latest
           ports:
-            - containerPort: 3002
+            - containerPort: 3002          
+          envFrom:
+            - secretRef:
+                name: auth-secret
           env:
             - name: DB_HOST
               value: "rds-airline-mysql-main.cluster-cb8q4mm6485z.ap-northeast-2.rds.amazonaws.com"
