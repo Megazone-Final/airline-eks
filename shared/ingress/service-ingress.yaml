@@ -6,7 +6,7 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: service-group
+    alb.ingress.kubernetes.io/group.name: airline-group
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
 spec:
   ingressClassName: alb
@@ -30,7 +30,7 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: service-group
+    alb.ingress.kubernetes.io/group.name: airline-group
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
 spec:
   ingressClassName: alb
@@ -54,7 +54,7 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: service-group
+    alb.ingress.kubernetes.io/group.name: airline-group
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
 spec:
   ingressClassName: alb
