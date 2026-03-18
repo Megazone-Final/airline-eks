@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: svc-auth
-  namespace: auth
+  namespace: airline-auth
 spec:
   selector:
     app: auth
