@@ -19,14 +19,19 @@ spec:
       containers:
       - name: flight
         image: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/flights:latest
+        envFrom:
+        - secretRef:
+            name: flight-secret
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
           protocol: TCP
         env:
         - name: SERVICE_NAME
           value: "flight"
-        - name: PORT
-          value: "8080"
+        - name: DB_IAM_AUTH
+          value: "true"
+        - name: DB_SSL_CA_PATH
+          value: "/app/certs/global-bundle.pem"
         resources:
           requests:
             memory: "256Mi"
@@ -37,13 +42,13 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: 3000
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /ready
-            port: 8080
+            path: /health
+            port: 3000
           initialDelaySeconds: 5
           periodSeconds: 5
 ---
