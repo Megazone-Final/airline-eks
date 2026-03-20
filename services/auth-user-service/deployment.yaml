@@ -20,7 +20,7 @@ spec:
         - name: auth
           image: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/auth:latest
           ports:
-            - containerPort: 3002          
+            - containerPort: 3000       
           envFrom:
             - secretRef:
                 name: auth-secret
@@ -40,7 +40,25 @@ spec:
             - name: AWS_REGION
               value: "ap-northeast-2"
             - name: PORT
-              value: "3002"
+              value: "3000"
+            - name: VALKEY_HOST
+              value: master.valkey-an2-airline-svc.kkbvm5.apn2.cache.amazonaws.com
+            - name: VALKEY_PORT
+              value: "6379"
+            - name: VALKEY_USER
+              value: auth-user
+            - name: VALKEY_TLS
+              value: "true"
+            - name: VALKEY_USE_IAM_AUTH
+              value: "true"
+            - name: VALKEY_CLUSTER_NAME
+              value: valkey-an2-airline-svc
+            - name: AWS_STS_REGIONAL_ENDPOINTS
+              value: regional
+            - name: AWS_CONTAINER_CREDENTIALS_FULL_URI
+              value: http://169.254.170.23/v1/credentials
+            - name: AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE
+              value: /var/run/secrets/pods.eks.amazonaws.com/serviceaccount/eks-pod-identity-token
           resources:
             requests:
               cpu: 100m
@@ -48,3 +66,15 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
