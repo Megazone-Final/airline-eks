@@ -27,8 +27,8 @@ spec:
           env:
             - name: DB_IAM_AUTH
               value: "true"
-            - name: DB_SSL_CA_PATH
-              value: "/app/certs/global-bundle.pem"
+            # - name: DB_SSL_CA_PATH
+            #   value: "/app/certs/global-bundle.pem"
           resources:
             requests:
               cpu: 100m
