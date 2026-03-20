@@ -1,0 +1,53 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  amiFamily: AL2023
+  role: "airline-KarpenterNodeRole-eks-an2"
+  tags:
+    Name: "airline-karpenter-node" # Node 이름 설정
+    Project: "airline"
+    ManagedBy: "karpenter"
+  
+  # ID 대신 태그로 서브넷 선택
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "eks-an2-airline-cluster" # 해당 태그가 있는 모든 서브넷을 자동으로 탐색
+
+  # ID 대신 태그로 보안 그룹 선택
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "eks-an2-airline-cluster" # 해당 태그가 있는 보안 그룹을 자동으로 탐색
+
+  # AMI도 태그 기반으로 선택 가능 (선택 사항)
+  # 만약 특정 AMI를 태그로 관리한다면 아래와 같이 사용합니다.
+  amiSelectorTerms:
+    - id: "ami-0f5a11c5a7730cd40"
+
+---
+
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  template:
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+      requirements:
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand"]
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        - key: "karpenter.k8s.aws/instance-category"
+          operator: In
+          values: ["t", "m"]
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 30s
