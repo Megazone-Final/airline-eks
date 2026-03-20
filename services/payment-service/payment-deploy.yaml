@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airline-payment
+  namespace: airline-payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airline-payment
+  template:
+    metadata:
+      labels:
+        app: airline-payment
+    spec:
+      serviceAccountName: payments-sa
+      containers:
+      - name: payments-api
+        image: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payments:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: payments-secret
