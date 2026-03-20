@@ -25,34 +25,10 @@ spec:
             - secretRef:
                 name: auth-secret
           env:
-            - name: DB_HOST
-              value: "rds-airline-mysql-main.cluster-cb8q4mm6485z.ap-northeast-2.rds.amazonaws.com"
-            - name: DB_PORT
-              value: "3306"
-            - name: DB_USER
-              value: "auth_user"
-            - name: DB_NAME
-              value: "auth"
             - name: DB_IAM_AUTH
               value: "true"
             - name: DB_SSL_CA_PATH
               value: "/app/certs/global-bundle.pem"
-            - name: AWS_REGION
-              value: "ap-northeast-2"
-            - name: PORT
-              value: "3000"
-            - name: VALKEY_HOST
-              value: master.valkey-an2-airline-session.kkbvm5.apn2.cache.amazonaws.com
-            - name: VALKEY_PORT
-              value: "6379"
-            - name: VALKEY_USER
-              value: auth-user
-            - name: VALKEY_TLS
-              value: "true"
-            - name: VALKEY_USE_IAM_AUTH
-              value: "true"
-            - name: VALKEY_CLUSTER_NAME
-              value: valkey-an2-airline-session
             - name: AWS_STS_REGIONAL_ENDPOINTS
               value: regional
             # - name: AWS_CONTAINER_CREDENTIALS_FULL_URI

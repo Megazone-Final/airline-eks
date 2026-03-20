@@ -19,25 +19,16 @@ spec:
       containers:
         - name: flight
           image: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/flights:latest
+          envFrom:
+            - secretRef:
+                name: flight-secret
           ports:
             - containerPort: 3000
           env:
-            - name: DB_HOST
-              value: "rds-airline-mysql-main.cluster-cb8q4mm6485z.ap-northeast-2.rds.amazonaws.com"
-            - name: DB_PORT
-              value: "3306"
-            - name: DB_USER
-              value: "flight_user"
-            - name: DB_NAME
-              value: "flights"
             - name: DB_IAM_AUTH
               value: "true"
             - name: DB_SSL_CA_PATH
               value: "/app/certs/global-bundle.pem"
-            - name: AWS_REGION
-              value: "ap-northeast-2"
-            - name: PORT
-              value: "3000"
           resources:
             requests:
               cpu: 100m
