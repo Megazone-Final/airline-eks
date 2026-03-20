@@ -25,7 +25,7 @@ metadata:
 apiVersion: v1
 kind : Namespace
 metadata:
-  name: svc-payment
+  name: airline-payment
   labels:
     Environment: prod
     Team: Indiana-Zones
@@ -33,7 +33,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: svc-flight
+  name: airline-flight
   labels:
     Environment: prod
     Team: Indiana-Zones
@@ -41,7 +41,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: svc-auth
+  name: airline-auth
   labels:
     Environment: prod
     Team: Indiana-Zones
