@@ -52,7 +52,7 @@ spec:
             - name: VALKEY_USE_IAM_AUTH
               value: "true"
             - name: VALKEY_CLUSTER_NAME
-              value: valkey-an2-airline-svc
+              value: valkey-an2-airline-session
             - name: AWS_STS_REGIONAL_ENDPOINTS
               value: regional
             # - name: AWS_CONTAINER_CREDENTIALS_FULL_URI
