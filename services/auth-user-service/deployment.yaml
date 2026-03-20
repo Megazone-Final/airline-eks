@@ -42,7 +42,7 @@ spec:
             - name: PORT
               value: "3000"
             - name: VALKEY_HOST
-              value: master.valkey-an2-airline-svc.kkbvm5.apn2.cache.amazonaws.com
+              value: master.valkey-an2-airline-session.kkbvm5.apn2.cache.amazonaws.com
             - name: VALKEY_PORT
               value: "6379"
             - name: VALKEY_USER
