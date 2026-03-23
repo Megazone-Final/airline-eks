@@ -3,6 +3,11 @@ grafana:
     existingSecret: grafana-admin-credentials
     passwordKey: admin-password
     userKey: admin-user
+  serviceAccount:
+    create: true
+    name: grafana
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::036333380579:role/iam-an2-airline-grafana-irsa
   grafana.ini:
     date_formats:
       default_timezone: Asia/Seoul
