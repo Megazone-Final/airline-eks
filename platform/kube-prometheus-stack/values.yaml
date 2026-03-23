@@ -1,0 +1,32 @@
+grafana:
+  admin:
+    existingSecret: grafana-admin-credentials
+    passwordKey: admin-password
+    userKey: admin-user
+  grafana.ini:
+    date_formats:
+      default_timezone: Asia/Seoul
+    server:
+      root_url: https://admin.izones.cloud/grafana
+      serve_from_sub_path: true
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClassName: gp3
+prometheus:
+  prometheusSpec:
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 4Gi
+      requests:
+        cpu: 500m
+        memory: 2Gi
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 30Gi
+          storageClassName: gp3
