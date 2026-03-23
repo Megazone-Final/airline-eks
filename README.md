@@ -1,62 +1,62 @@
 # airline-eks
 
-`airline-eks` contains Kubernetes manifests and cluster-side operational assets for running the airline services on Amazon EKS.
+`airline-eks`는 Amazon EKS 환경에서 항공 서비스들을 운영하기 위한 Kubernetes 매니페스트와 운영 보조 자산을 담고 있습니다.
 
-## Purpose
+## 목적
 
-This repository is the manifest layer for:
+이 저장소는 다음 항목의 매니페스트 계층입니다.
 
-- service Deployments, Services, and HPAs
-- shared Ingress resources
-- namespace bootstrap
-- Karpenter-related manifests
-- cluster bootstrap references
-- k6 load-test jobs and scripts
+- 서비스별 Deployment, Service, HPA
+- 공용 Ingress
+- Namespace 초기 구성
+- Karpenter 관련 설정
+- 클러스터 부트스트랩 참고 파일
+- k6 부하 테스트 스크립트와 Job 매니페스트
 
-## Directory Layout
+## 디렉터리 구조
 
 ### `platform/`
 
-Cluster platform components:
+플랫폼 공통 구성:
 
 - `platform/namespaces/namespaces.yml`
 - `platform/argocd/ingress.yaml`
 
 ### `services/`
 
-Workload manifests per service:
+서비스별 워크로드 매니페스트:
 
 - `services/auth-user-service/`
 - `services/flight-service/`
 - `services/payment-service/`
 
-Included resources vary by service, such as:
+서비스에 따라 다음 리소스가 포함됩니다.
 
 - Deployment
 - Service
 - HPA
 - ServiceAccount
-- Secret reference
+- Secret 참조
 
 ### `shared/`
 
-Shared operational manifests:
+공용 운영 매니페스트:
 
-- `shared/cluster/` : cluster bootstrap references and ENI/Karpenter setup
-- `shared/ingress/` : public/admin ingress
-- `shared/karpenter/` : Karpenter helper manifests
+- `shared/cluster/` : 클러스터 생성 및 ENI/Karpenter 관련 참고 구성
+- `shared/ingress/` : 서비스/관리용 Ingress
+- `shared/karpenter/` : Karpenter 보조 매니페스트
 
 ### `k6/`
 
-Load-test assets:
+부하 테스트 자산:
 
-- JavaScript scenarios for auth, search, checkout, mypage
-- Kubernetes Jobs under `k6/k8s/`
-- separate README in `k6/README.md`
+- 인증, 검색, 체크아웃, 마이페이지 시나리오 스크립트
+- `k6/k8s/` 하위 Kubernetes Job
+- 상세 설명은 `k6/README.md`
 
-## Namespaces
+## 네임스페이스
 
-Current namespace bootstrap file creates:
+현재 네임스페이스 초기화 파일은 아래 네임스페이스를 생성합니다.
 
 - `argocd`
 - `karpenter`
@@ -65,70 +65,73 @@ Current namespace bootstrap file creates:
 - `airline-flight`
 - `airline-auth`
 
-## Public Entry Points
+## 외부 진입점
 
-Ingress manifests currently reference:
+Ingress 설정에 사용 중인 호스트:
 
 - `izones.cloud`
 - `admin.izones.cloud`
 - `argocd.izones.cloud`
 
-Service ingress routing is split by namespace/service and uses ALB ingress annotations.
+서비스 Ingress는 네임스페이스별로 분리되어 있으며 ALB Ingress 어노테이션을 사용합니다.
 
-## Manifest Inventory
+## 매니페스트 목록
 
-CI validation reads the manifest set listed in:
+CI 검증 기준 파일:
 
 - `manifests.txt`
 
-That list currently includes:
+현재 포함 대상:
 
-- platform manifests
-- service manifests
-- shared ingress/cluster/Karpenter manifests
-- k6 Kubernetes job manifests
+- platform 매니페스트
+- 서비스 매니페스트
+- shared ingress/cluster/Karpenter 매니페스트
+- k6 Kubernetes Job 매니페스트
 
-## Validation
+## 검증
 
-GitHub Actions workflow:
+GitHub Actions 워크플로:
 
 - `.github/workflows/eks.yaml`
 
-What it does:
+현재 동작:
 
-1. collect manifest files from `services`, `shared`, `platform`, and `k6/k8s`
-2. validate them with `kubeconform`
+1. `services`, `shared`, `platform`, `k6/k8s`에서 매니페스트 수집
+2. `kubeconform`으로 스키마 검증
 
-This is validation-only. It does not apply manifests automatically.
+주의:
 
-## Operational Notes
+- 이 워크플로는 검증만 수행합니다.
+- 자동 배포나 `kubectl apply`는 수행하지 않습니다.
 
-- service manifests are split by bounded context rather than by environment
-- some files under `shared/cluster/` are cluster bootstrap references rather than day-2 app manifests
-- `payment-service/payment-secret.yaml` exists in this repo, so secret handling should be reviewed before treating this repo as broadly shareable
+## 운영 메모
+
+- 서비스 매니페스트는 환경 기준이 아니라 서비스 경계 기준으로 분리되어 있습니다.
+- `shared/cluster/` 하위 파일 중 일부는 일상 운영용이 아니라 클러스터 부트스트랩 참고용입니다.
+- `services/payment-service/payment-secret.yaml`가 저장소에 포함되어 있으므로 시크릿 관리 방식은 별도 점검이 필요합니다.
 
 ## k6
 
-For load testing, start from:
+부하 테스트 시작점:
 
 - `k6/README.md`
 
-Covered scenarios include:
+포함된 시나리오:
 
-- search smoke
-- auth login/profile/logout
-- auth burst for autoscaling checks
-- mixed auth + search burst
-- checkout flow
-- mypage flow
+- 검색 스모크 테스트
+- 로그인/프로필/로그아웃
+- 인증 버스트 테스트
+- 인증 + 검색 혼합 부하
+- 체크아웃 플로우
+- 마이페이지 조회
 
-## Typical Apply Order
+## 수동 적용 순서 예시
 
-When applying manually, the practical order is:
+수동 적용 시 일반적인 순서는 다음과 같습니다.
 
-1. namespaces
-2. cluster/shared prerequisites as needed
-3. service Deployments and Services
-4. HPA resources
-5. ingress resources
-6. optional k6 jobs
+1. 네임스페이스
+2. 필요 시 cluster/shared 선행 리소스
+3. 서비스 Deployment 및 Service
+4. HPA
+5. Ingress
+6. 선택적으로 k6 Job
