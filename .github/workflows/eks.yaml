@@ -30,11 +30,13 @@ jobs:
                   tar -xzf kubeconform.tar.gz
                   sudo mv kubeconform /usr/local/bin/
 
-            - name: Collect manifest files
-              run: |
-                  find services shared platform k6/k8s -type f \( -name "*.yaml" -o -name "*.yml" \) | sort > manifests.txt
-                  echo "Found $(wc -l < manifests.txt) manifest files"
-                  test -s manifests.txt
+            # - name: Collect manifest files
+            #   run: |
+            #       find services shared platform k6/k8s -type f \( -name "*.yaml" -o -name "*.yml" \) | sort > manifests.txt
+            #       echo "Found $(wc -l < manifests.txt) manifest files"
+            #       test -s manifests.txt
 
             - name: Validate manifests
-              run: xargs kubeconform -strict -summary -ignore-missing-schemas < manifests.txt
+              run: |
+                  find platform services shared -type f \( -name "*.yaml" -o -name "*.yml" \) \
+                  | xargs kubeconform -strict -summary -ignore-missing-schemas
