@@ -3,6 +3,7 @@ kind: Namespace
 metadata:
   name: istio-system
   labels:
-    istio-injection: enabled
+    app.kubernetes.io/name: istio-system
+    app.kubernetes.io/part-of: istio
     Environment: prod
     Team: Indiana-Zones
