@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: airline-payment
+      annotations:
+        traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.170.23/32"
     spec:
       serviceAccountName: payments-sa
       containers:
