@@ -29,6 +29,9 @@ metadata:
   labels:
     Environment: prod
     Team: Indiana-Zones
+    istio.io/dataplane-mode: ambient
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 ---
 apiVersion: v1
 kind: Namespace
@@ -37,6 +40,9 @@ metadata:
   labels:
     Environment: prod
     Team: Indiana-Zones
+    istio.io/dataplane-mode: ambient
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 ---
 apiVersion: v1
 kind: Namespace
@@ -45,3 +51,6 @@ metadata:
   labels:
     Environment: prod
     Team: Indiana-Zones
+    istio.io/dataplane-mode: ambient
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
