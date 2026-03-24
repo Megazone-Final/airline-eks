@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         app: auth
+      annotations:
+        traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.170.23/32"
     spec:
       serviceAccountName: auth-sa
       containers:
