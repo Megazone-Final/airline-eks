@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-aws-for-fluent-bit
+  namespace: monitoring
+  labels:
+    helm.sh/chart: aws-for-fluent-bit-0.2.0
+    app.kubernetes.io/name: aws-for-fluent-bit
+    app.kubernetes.io/instance: fluent-bit-aws-for-fluent-bit
+    app.kubernetes.io/version: "3.2.1"
+    app.kubernetes.io/managed-by: Helm
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        HTTP_Server  On
+        HTTP_Listen  0.0.0.0
+        HTTP_PORT    2020
+        Health_Check On
+        HC_Errors_Count 5
+        HC_Retry_Failure_Count 5
+        HC_Period 5
+
+        Parsers_File /fluent-bit/parsers/parsers.conf
+
+    [INPUT]
+        Name              tail
+        Tag               kube.*
+        Path              /var/log/containers/*.log
+        DB                /var/log/flb_kube.db
+        multiline.parser  docker, cri
+        Mem_Buf_Limit     5MB
+        Skip_Long_Lines   On
+        Refresh_Interval  10
+
+    [FILTER]
+        Name                kubernetes
+        Match               kube.*
+        Kube_URL            https://kubernetes.default.svc.cluster.local:443
+        Merge_Log           On
+        Merge_Log_Key       data
+        Keep_Log            On
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude On
+        Buffer_Size         32k
+
+    [FILTER]
+        Name          rewrite_tag
+        Match         kube.*
+        Rule          $kubernetes['namespace_name'] ^airline-auth$ airline.auth false
+        Rule          $kubernetes['namespace_name'] ^airline-flight$ airline.flight false
+        Rule          $kubernetes['namespace_name'] ^airline-payment$ airline.payment false
+        Emitter_Name  airline_router
+
+    [OUTPUT]
+        Name                  cloudwatch_logs
+        Match                 airline.auth
+        region                ap-northeast-2
+        log_group_name        /aws/eks/airline/auth
+        log_stream_prefix     auth-
+        auto_create_group     true
+        log_retention_days    30
+
+    [OUTPUT]
+        Name                  cloudwatch_logs
+        Match                 airline.flight
+        region                ap-northeast-2
+        log_group_name        /aws/eks/airline/flight
+        log_stream_prefix     flight-
+        auto_create_group     true
+        log_retention_days    30
+
+    [OUTPUT]
+        Name                  cloudwatch_logs
+        Match                 airline.payment
+        region                ap-northeast-2
+        log_group_name        /aws/eks/airline/payment
+        log_stream_prefix     payment-
+        auto_create_group     true
+        log_retention_days    30
+
+    [OUTPUT]
+        Name                  cloudwatch_logs
+        Match                 kube.*
+        region                ap-northeast-2
+        log_group_name        /aws/eks/fluentbit-cloudwatch/logs
+        log_stream_prefix     fluentbit-
+        auto_create_group     true
+        log_retention_days    30
