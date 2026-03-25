@@ -61,8 +61,6 @@ Selector labels
 */}}
 {{- define "auth.selectorLabels" -}}
 app: {{ include "auth.appName" . }}
-app.kubernetes.io/name: {{ include "auth.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
