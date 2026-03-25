@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airline-auth
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: auth=036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/auth
+    argocd-image-updater.argoproj.io/auth.helm.image-name: image.repository
+    argocd-image-updater.argoproj.io/auth.helm.image-tag: image.tag
+    argocd-image-updater.argoproj.io/auth.update-strategy: digest
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues:/values.yaml
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Megazone-Final/airline-eks.git
+    targetRevision: HEAD
+    path: services/auth
+    helm:
+      releaseName: auth
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airline-auth
+  syncPolicy:
+    automated:
+      selfHeal: true
+      enabled: true
