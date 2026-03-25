@@ -1,0 +1,101 @@
+#
+# flight-service raw manifest 기준 기본값
+#
+namespace: airline-flight
+appName: flight
+
+deployment:
+  name: flight
+
+container:
+  name: flight
+  port: 3000
+
+replicaCount: 2
+
+image:
+  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/flights
+  pullPolicy: Always
+  tag: latest
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: flight-sa
+
+podAnnotations:
+  traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.170.23/32"
+
+service:
+  name: svc-flight
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+
+envFrom:
+  - secretRef:
+      name: flight-secret
+
+env:
+  - name: DB_IAM_AUTH
+    value: "true"
+
+resources:
+  # 기존 flight-service 요청/제한값 유지
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+autoscaling:
+  enabled: true
+  name: flight-hpa
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "1000"
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 60
+        - type: Pods
+          value: 2
+          periodSeconds: 60
+      selectPolicy: Max

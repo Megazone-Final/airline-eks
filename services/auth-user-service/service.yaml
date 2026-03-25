@@ -4,10 +4,10 @@ metadata:
   name: svc-auth
   namespace: airline-auth
 spec:
-  selector:
-    app: auth
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-  type: ClusterIP
+  selector:
+    app: auth
