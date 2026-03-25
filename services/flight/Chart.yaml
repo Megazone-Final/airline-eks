@@ -1,0 +1,6 @@
+apiVersion: v2
+name: flight
+description: Flight service Helm chart aligned with flight-service manifests
+type: application
+version: 0.1.0
+appVersion: "latest"
