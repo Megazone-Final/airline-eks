@@ -15,7 +15,7 @@ spec:
       annotations:
         traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.170.23/32"
     spec:
-      serviceAccountName: payments-sa
+      serviceAccountName: payment-sa
       containers:
       - name: payments-api
         image: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payments:latest
