@@ -1,0 +1,21 @@
+config:
+  argocd:
+    grpcWeb: true
+    serverAddress: "http://argocd-server.argocd"
+    insecure: true
+    plaintext: true
+  logLevel: debug
+  registries:
+    - name: ECR
+      api_url: "https://036333380579.dkr.ecr.ap-northeast-2.amazonaws.com"
+      prefix: "036333380579.dkr.ecr.ap-northeast-2.amazonaws.com"
+      ping: true
+      insecure: false
+      credentials: "ext:/scripts/auth1.sh"
+      credsexpire: 10h
+authScripts:
+  enabled: true
+  scripts:
+    auth1.sh: |
+      #!/bin/sh
+      aws ecr --region ap-northeast-2 get-authorization-token --output text --query 'authorizationData[].authorizationToken' | base64 -d
