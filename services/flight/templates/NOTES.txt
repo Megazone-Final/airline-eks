@@ -1,21 +1,36 @@
+{{- $httpRoute := .Values.httpRoute | default dict -}}
+{{- $httpRouteHostnames := $httpRoute.hostnames | default (list) -}}
+{{- $httpRouteParentRefs := $httpRoute.parentRefs | default (list) -}}
+{{- $httpRouteRules := $httpRoute.rules | default (list) -}}
+{{- $ingress := .Values.ingress | default dict -}}
+{{- $ingressHosts := $ingress.hosts | default (list) -}}
+{{- $ingressTLS := $ingress.tls | default (list) -}}
 1. Get the application URL by running these commands:
-{{- if .Values.httpRoute.enabled }}
-{{- if .Values.httpRoute.hostnames }}
-    export APP_HOSTNAME={{ .Values.httpRoute.hostnames | first }}
-{{- else }}
-    export APP_HOSTNAME=$(kubectl get --namespace {{(first .Values.httpRoute.parentRefs).namespace | default .Release.Namespace }} gateway/{{ (first .Values.httpRoute.parentRefs).name }} -o jsonpath="{.spec.listeners[0].hostname}")
-  {{- end }}
-{{- if and .Values.httpRoute.rules (first .Values.httpRoute.rules).matches (first (first .Values.httpRoute.rules).matches).path.value }}
-    echo "Visit http://$APP_HOSTNAME{{ (first (first .Values.httpRoute.rules).matches).path.value }} to use your application"
+{{- if ($httpRoute.enabled | default false) }}
+{{- if $httpRouteHostnames }}
+    export APP_HOSTNAME={{ first $httpRouteHostnames }}
+{{- else if $httpRouteParentRefs }}
+    export APP_HOSTNAME=$(kubectl get --namespace {{ (first $httpRouteParentRefs).namespace | default .Release.Namespace }} gateway/{{ (first $httpRouteParentRefs).name }} -o jsonpath="{.spec.listeners[0].hostname}")
+{{- end }}
+{{- with first $httpRouteRules }}
+{{- with .matches }}
+{{- with first . }}
+{{- with .path }}
+{{- if .value }}
+    echo "Visit http://$APP_HOSTNAME{{ .value }} to use your application"
 
     NOTE: Your HTTPRoute depends on the listener configuration of your gateway and your HTTPRoute rules.
     The rules can be set for path, method, header and query parameters.
-    You can check the gateway configuration with 'kubectl get --namespace {{(first .Values.httpRoute.parentRefs).namespace | default .Release.Namespace }} gateway/{{ (first .Values.httpRoute.parentRefs).name }} -o yaml'
+    You can check the gateway configuration with 'kubectl get --namespace {{ (first $httpRouteParentRefs).namespace | default .Release.Namespace }} gateway/{{ (first $httpRouteParentRefs).name }} -o yaml'
 {{- end }}
-{{- else if .Values.ingress.enabled }}
-{{- range $host := .Values.ingress.hosts }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- else if ($ingress.enabled | default false) }}
+{{- range $host := $ingressHosts }}
   {{- range .paths }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  http{{ if $ingressTLS }}s{{ end }}://{{ $host.host }}{{ .path }}
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.service.type }}
