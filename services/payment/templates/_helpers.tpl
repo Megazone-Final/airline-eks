@@ -61,8 +61,6 @@ Selector labels
 */}}
 {{- define "payment.selectorLabels" -}}
 app: {{ include "payment.appName" . }}
-app.kubernetes.io/name: {{ include "payment.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*

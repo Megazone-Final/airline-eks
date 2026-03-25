@@ -61,8 +61,6 @@ Selector labels
 */}}
 {{- define "flight.selectorLabels" -}}
 app: {{ include "flight.appName" . }}
-app.kubernetes.io/name: {{ include "flight.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*

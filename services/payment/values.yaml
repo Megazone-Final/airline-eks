@@ -2,13 +2,13 @@
 # payment-service raw manifest 기준 기본값
 #
 namespace: airline-payment
-appName: payment
+appName: airline-payment
 
 deployment:
-  name: payment
+  name: airline-payment
 
 container:
-  name: payment
+  name: payments-api
   port: 3000
 
 replicaCount: 1
@@ -22,7 +22,7 @@ serviceAccount:
   create: true
   automount: true
   annotations: {}
-  name: payments-sa
+  name: payment-sa
 
 podAnnotations:
   traffic.sidecar.istio.io/excludeOutboundIPRanges: "169.254.170.23/32"
