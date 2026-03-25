@@ -21,6 +21,7 @@
 
 - `platform/namespaces/namespaces.yml`
 - `platform/argocd/ingress.yaml`
+- `platform/fluentbit/fluentbit-configmap.yaml`
 
 ### `services/`
 

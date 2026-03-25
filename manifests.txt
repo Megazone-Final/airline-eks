@@ -5,6 +5,7 @@ k6/k8s/10-search-smoke-job.yaml
 k6/k8s/11-auth-burst-job.yaml
 k6/k8s/12-auth-search-mix-job.yaml
 platform/argocd/ingress.yaml
+platform/fluentbit/fluentbit-configmap.yaml
 platform/namespaces/namespaces.yml
 services/auth-user-service/deployment.yaml
 services/auth-user-service/hpa.yaml
