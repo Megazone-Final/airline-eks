@@ -42,7 +42,7 @@ env:
     value: "true"
   - name: DB_CONNECTION_LIMIT
     value: "20"
-    
+
 resources:
   # 기존 flight-service 요청/제한값 유지
   limits:
@@ -54,13 +54,13 @@ resources:
 
 livenessProbe:
   httpGet:
-    path: /health
+    path: /livez
     port: 3000
   initialDelaySeconds: 30
   periodSeconds: 10
 readinessProbe:
   httpGet:
-    path: /health
+    path: /readyz
     port: 3000
   initialDelaySeconds: 5
   periodSeconds: 5
