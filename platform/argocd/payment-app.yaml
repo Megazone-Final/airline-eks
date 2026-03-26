@@ -4,10 +4,11 @@ metadata:
   name: airline-payment
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: payment=036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payments
+    argocd-image-updater.argoproj.io/image-list: payment=036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payment
     argocd-image-updater.argoproj.io/payment.helm.image-name: image.repository
     argocd-image-updater.argoproj.io/payment.helm.image-tag: image.tag
-    argocd-image-updater.argoproj.io/payment.update-strategy: digest
+    argocd-image-updater.argoproj.io/payment.update-strategy: semver
+    argocd-image-updater.argoproj.io/payment.allow-tags: regexp:^[0-9]+\.[0-9]+\.[0-9]+$
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/write-back-target: helmvalues:/values.yaml
 spec:
