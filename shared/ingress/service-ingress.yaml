@@ -131,6 +131,7 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTP": 8080}]'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:036333380579:certificate/083c5c21-28b8-410f-973a-99ba72bfc599
 spec:
+  ingressClassName: alb
   rules:
     - host: admin.izones.cloud
       http:
