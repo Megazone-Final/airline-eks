@@ -131,7 +131,7 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTP": 8080}]'
 spec:
   rules:
-    - host: grafana.izones.cloud
+    - host: admin.izones.cloud
       http:
         paths:
           - path: /
