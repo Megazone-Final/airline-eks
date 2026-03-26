@@ -15,7 +15,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/Megazone-Final/airline-eks.git
-    targetRevision: mlee0323/eks/fix
+    targetRevision: main
     path: services/payment
     helm:
       releaseName: payment
