@@ -14,9 +14,9 @@ container:
 replicaCount: 1
 
 image:
-  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payments
+  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payment
   pullPolicy: Always
-  tag: latest
+  tag: 1.0.1
 
 serviceAccount:
   create: true
