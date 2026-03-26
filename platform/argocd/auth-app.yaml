@@ -14,7 +14,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/Megazone-Final/airline-eks.git
-    targetRevision: HEAD
+    targetRevision: mlee0323/eks/fix
     path: services/auth
     helm:
       releaseName: auth
@@ -23,5 +23,6 @@ spec:
     namespace: airline-auth
   syncPolicy:
     automated:
+      prune: true
       selfHeal: true
       enabled: true
