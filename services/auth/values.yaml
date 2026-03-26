@@ -50,7 +50,8 @@ env:
     value: "true"
   - name: AWS_STS_REGIONAL_ENDPOINTS
     value: regional
-
+  - name: DB_CONNECTION_LIMIT
+    value: "20"
 
 resources:
   # 기존 auth-user-service 요청/제한값 유지
@@ -79,7 +80,7 @@ autoscaling:
   enabled: true
   name: auth-hpa
   minReplicas: 2
-  maxReplicas: 10
+  maxReplicas: 30
   metrics:
     - type: Resource
       resource:
