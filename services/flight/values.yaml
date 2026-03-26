@@ -40,7 +40,9 @@ envFrom:
 env:
   - name: DB_IAM_AUTH
     value: "true"
-
+  - name: DB_CONNECTION_LIMIT
+    value: "20"
+    
 resources:
   # 기존 flight-service 요청/제한값 유지
   limits:
@@ -67,7 +69,7 @@ autoscaling:
   enabled: true
   name: flight-hpa
   minReplicas: 2
-  maxReplicas: 10
+  maxReplicas: 30
   metrics:
     - type: Resource
       resource:
