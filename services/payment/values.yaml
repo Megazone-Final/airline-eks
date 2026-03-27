@@ -2,13 +2,13 @@
 # payment-service raw manifest 기준 기본값
 #
 namespace: airline-payment
-appName: airline-payment
+appName: payment
 
 deployment:
-  name: airline-payment
+  name: payment
 
 container:
-  name: payments-api
+  name: payment
   port: 3000
 
 replicaCount: 1
