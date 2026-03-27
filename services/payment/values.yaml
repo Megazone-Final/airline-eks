@@ -14,9 +14,9 @@ container:
 replicaCount: 1
 
 image:
-  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payments
+  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payment
   pullPolicy: Always
-  tag: latest
+  tag: 1.0.1
 
 serviceAccount:
   create: true
@@ -36,6 +36,21 @@ service:
 envFrom:
   - secretRef:
       name: payments-secret
+
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-secretsmanager
+    kind: ClusterSecretStore
+  targetName: payments-secret
+  remoteKey: airline/service/prod
+
+env:
+  - name: DB_USER
+    value: payment_user
+  - name: DB_NAME
+    value: payment
 
 resources:
   requests:

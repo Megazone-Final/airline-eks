@@ -14,9 +14,9 @@ container:
 replicaCount: 2
 
 image:
-  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/flights
+  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/flight
   pullPolicy: Always
-  tag: latest
+  tag: 1.0.1
 
 serviceAccount:
   create: true
@@ -37,11 +37,24 @@ envFrom:
   - secretRef:
       name: flight-secret
 
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-secretsmanager
+    kind: ClusterSecretStore
+  targetName: flight-secret
+  remoteKey: airline/service/prod
+
 env:
   - name: DB_IAM_AUTH
     value: "true"
   - name: DB_CONNECTION_LIMIT
     value: "20"
+  - name: DB_USER
+    value: flight_user
+  - name: DB_NAME
+    value: flight
 
 resources:
   # 기존 flight-service 요청/제한값 유지
