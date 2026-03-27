@@ -45,6 +45,15 @@ envFrom:
   - secretRef:
       name: auth-secret
 
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-secretsmanager
+    kind: ClusterSecretStore
+  targetName: auth-secret
+  remoteKey: airline/service/prod
+
 env:
   - name: DB_IAM_AUTH
     value: "true"
@@ -52,6 +61,10 @@ env:
     value: regional
   - name: DB_CONNECTION_LIMIT
     value: "20"
+  - name: DB_USER
+    value: auth_user
+  - name: DB_NAME
+    value: auth
 
 resources:
   # 기존 auth-user-service 요청/제한값 유지
