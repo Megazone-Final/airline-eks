@@ -1,8 +1,14 @@
 grafana:
+  replicas: 1
   admin:
     existingSecret: grafana-admin-credentials
     passwordKey: admin-password
     userKey: admin-user
+  serviceAccount:
+    create: true
+    name: grafana
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::036333380579:role/iam-an2-airline-grafana-irsa
   grafana.ini:
     date_formats:
       default_timezone: Asia/Seoul
@@ -11,9 +17,36 @@ grafana:
       serve_from_sub_path: true
   persistence:
     enabled: true
-    existingClaim: "grafana-pvc"
     size: 10Gi
-    storageClassName: gp3
+    storageClassName: gp3-retain
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 300m
+        memory: 512Mi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+          storageClassName: gp3-retain
+    alertmanagerConfigSelector:
+      matchLabels:
+        alertmanagerConfig: main
+    alertmanagerConfigNamespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: monitoring
+    alertmanagerConfigMatcherStrategy:
+      type: OnNamespace
 prometheus:
   prometheusSpec:
     resources:
@@ -30,5 +63,4 @@ prometheus:
           resources:
             requests:
               storage: 30Gi
-          volumeName: "prometheus-pv"
           storageClassName: gp3
