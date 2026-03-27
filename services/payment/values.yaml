@@ -50,7 +50,7 @@ env:
   - name: DB_USER
     value: payment_user
   - name: DB_NAME
-    value: payments
+    value: payment
 
 resources:
   requests:
