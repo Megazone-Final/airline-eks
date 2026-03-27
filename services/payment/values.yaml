@@ -37,6 +37,21 @@ envFrom:
   - secretRef:
       name: payments-secret
 
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-secretsmanager
+    kind: ClusterSecretStore
+  targetName: payments-secret
+  remoteKey: airline/service/prod
+
+env:
+  - name: DB_USER
+    value: payment_user
+  - name: DB_NAME
+    value: payments
+
 resources:
   requests:
     cpu: "100m"
