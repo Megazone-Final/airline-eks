@@ -1,4 +1,5 @@
 grafana:
+  replicas: 1
   admin:
     existingSecret: grafana-admin-credentials
     passwordKey: admin-password
@@ -16,9 +17,36 @@ grafana:
       serve_from_sub_path: true
   persistence:
     enabled: true
-    existingClaim: "grafana-existing-pvc"
     size: 10Gi
-    storageClassName: gp3
+    storageClassName: gp3-retain
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 300m
+        memory: 512Mi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+          storageClassName: gp3-retain
+    alertmanagerConfigSelector:
+      matchLabels:
+        alertmanagerConfig: main
+    alertmanagerConfigNamespaceSelector:
+      matchNames:
+        - monitoring
+    alertmanagerConfigMatcherStrategy:
+      type: OnNamespace
 prometheus:
   prometheusSpec:
     resources:
@@ -35,5 +63,4 @@ prometheus:
           resources:
             requests:
               storage: 30Gi
-          volumeName: "prometheus-existing-pv"
           storageClassName: gp3

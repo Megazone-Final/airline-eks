@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-webhook-secret
+  namespace: monitoring
+type: Opaque
+stringData:
+  url: "https://example.com/webhook"
+
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: main
+  namespace: monitoring
+  labels:
+    alertmanagerConfig: main
+spec:
+  route:
+    receiver: default-webhook
+    groupBy:
+      - alertname
+      - namespace
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 4h
+  receivers:
+    - name: default-webhook
+      webhookConfigs:
+        - urlSecret:
+            name: alertmanager-webhook-secret
+            key: url
+          sendResolved: true
