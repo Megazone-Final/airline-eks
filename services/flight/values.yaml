@@ -37,11 +37,24 @@ envFrom:
   - secretRef:
       name: flight-secret
 
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-secretsmanager
+    kind: ClusterSecretStore
+  targetName: flight-secret
+  remoteKey: airline/service/prod
+
 env:
   - name: DB_IAM_AUTH
     value: "true"
   - name: DB_CONNECTION_LIMIT
     value: "20"
+  - name: DB_USER
+    value: flight_user
+  - name: DB_NAME
+    value: flights
 
 resources:
   # 기존 flight-service 요청/제한값 유지
