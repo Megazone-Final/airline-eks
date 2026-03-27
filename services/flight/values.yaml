@@ -54,7 +54,7 @@ env:
   - name: DB_USER
     value: flight_user
   - name: DB_NAME
-    value: flights
+    value: flight
 
 resources:
   # 기존 flight-service 요청/제한값 유지
