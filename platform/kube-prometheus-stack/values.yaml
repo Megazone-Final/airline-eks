@@ -11,7 +11,7 @@ grafana:
       serve_from_sub_path: true
   persistence:
     enabled: true
-    existingClaim: "grafana-existing-pvc"
+    existingClaim: "grafana-pvc"
     size: 10Gi
     storageClassName: gp3
 prometheus:
@@ -30,5 +30,5 @@ prometheus:
           resources:
             requests:
               storage: 30Gi
-          volumeName: "prometheus-existing-pv"
+          volumeName: "prometheus-pv"
           storageClassName: gp3
