@@ -5,6 +5,9 @@ config:
     insecure: true
     plaintext: true
   logLevel: debug
+  git.user: argocd-image-updater
+  git.email: argocd-image-updater@megazone.local
+  git.commit-message-template: "chore: update image tags"
   registries:
     - name: ECR
       api_url: "https://036333380579.dkr.ecr.ap-northeast-2.amazonaws.com"
@@ -13,9 +16,14 @@ config:
       insecure: false
       credentials: "ext:/scripts/auth1.sh"
       credsexpire: 10h
+
 authScripts:
   enabled: true
   scripts:
     auth1.sh: |
       #!/bin/sh
       aws ecr --region ap-northeast-2 get-authorization-token --output text --query 'authorizationData[].authorizationToken' | base64 -d
+
+serviceAccount:
+  create: true
+  name: argocd-image-updater
