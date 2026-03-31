@@ -77,7 +77,7 @@ autoscaling:
   enabled: true
   name: payment-hpa
   minReplicas: 2
-  maxReplicas: 30
+  maxReplicas: 1000
   metrics:
     - type: Resource
       resource:
