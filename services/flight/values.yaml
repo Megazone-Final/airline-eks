@@ -11,7 +11,7 @@ container:
   name: flight
   port: 3000
 
-replicaCount: 1
+replicaCount: 30
 
 image:
   repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/flight
@@ -81,8 +81,8 @@ readinessProbe:
 autoscaling:
   enabled: true
   name: flight-hpa
-  minReplicas: 1
-  maxReplicas: 1
+  minReplicas: 30
+  maxReplicas: 1000
   metrics:
     - type: Resource
       resource:
