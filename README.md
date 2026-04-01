@@ -97,11 +97,13 @@ GitHub Actions 워크플로:
 
 현재 동작:
 
-1. `services`, `shared`, `platform`, `k6/k8s`에서 매니페스트 수집
-2. `kubeconform`으로 스키마 검증
+1. `platform`, `shared`의 raw Kubernetes 매니페스트를 `kubeconform`으로 검증
+2. `services/auth`, `services/flight`, `services/payment` Helm 차트를 `helm lint`
+3. Helm 렌더링 결과를 다시 `kubeconform`으로 검증
 
 주의:
 
+- `k6` 관련 매니페스트는 이 워크플로의 검증 대상이 아닙니다.
 - 이 워크플로는 검증만 수행합니다.
 - 자동 배포나 `kubectl apply`는 수행하지 않습니다.
 

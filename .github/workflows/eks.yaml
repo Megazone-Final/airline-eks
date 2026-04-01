@@ -7,7 +7,6 @@ on:
             - "services/**"
             - "shared/**"
             - "platform/**"
-            - "k6/k8s/**"
             - ".github/workflows/eks.yaml"
     push:
         branches: [main]
@@ -15,7 +14,6 @@ on:
             - "services/**"
             - "shared/**"
             - "platform/**"
-            - "k6/k8s/**"
             - ".github/workflows/eks.yaml"
 
 jobs:
@@ -24,19 +22,51 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Set up Helm
+              uses: azure/setup-helm@v4
+
             - name: Install kubeconform
               run: |
                   curl -L -o kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
                   tar -xzf kubeconform.tar.gz
                   sudo mv kubeconform /usr/local/bin/
 
-            # - name: Collect manifest files
-            #   run: |
-            #       find services shared platform k6/k8s -type f \( -name "*.yaml" -o -name "*.yml" \) | sort > manifests.txt
-            #       echo "Found $(wc -l < manifests.txt) manifest files"
-            #       test -s manifests.txt
-
-            - name: Validate manifests
+            - name: Validate raw manifests
+              shell: bash
               run: |
-                  find platform services shared -type f \( -name "*.yaml" -o -name "*.yml" \) \
-                  | xargs kubeconform -strict -summary -ignore-missing-schemas
+                  set -euo pipefail
+
+                  mapfile -t raw_manifests < <(
+                    find platform shared -type f \( -name "*.yaml" -o -name "*.yml" \) \
+                    ! -name "values.yaml" \
+                    ! -name "*-values.yaml" \
+                    | sort
+                  )
+
+                  echo "Found ${#raw_manifests[@]} raw manifests"
+                  test "${#raw_manifests[@]}" -gt 0
+
+                  kubeconform -strict -summary -ignore-missing-schemas "${raw_manifests[@]}"
+
+            - name: Validate Helm charts
+              shell: bash
+              run: |
+                  set -euo pipefail
+
+                  charts=(
+                    services/auth
+                    services/flight
+                    services/payment
+                  )
+
+                  for chart in "${charts[@]}"; do
+                    release_name="$(basename "$chart")"
+
+                    echo "Linting $chart"
+                    helm lint "$chart"
+
+                    echo "Rendering $chart"
+                    echo "Validating rendered manifest for $chart"
+                    helm template "$release_name" "$chart" \
+                    | kubeconform -strict -summary -ignore-missing-schemas -
+                  done
