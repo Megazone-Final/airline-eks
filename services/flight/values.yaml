@@ -90,13 +90,13 @@ autoscaling:
         target:
           type: Utilization
           averageUtilization: 60
-    - type: Pods
-      pods:
-        metric:
-          name: http_requests_per_second
-        target:
-          type: AverageValue
-          averageValue: "1000"
+    # - type: Pods
+    #   pods:
+    #     metric:
+    #       name: http_requests_per_second
+    #     target:
+    #       type: AverageValue
+    #       averageValue: "1000"
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 300
