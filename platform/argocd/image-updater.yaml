@@ -1,0 +1,13 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: airline-services
+  namespace: argocd
+spec:
+  applicationRefs:
+    - namePattern: airline-auth
+      useAnnotations: true
+    - namePattern: airline-flight
+      useAnnotations: true
+    - namePattern: airline-payment
+      useAnnotations: true
