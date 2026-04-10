@@ -4,7 +4,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: eks-an2-airline-cluster
+  name: eks-an2-airline-main
   region: ap-northeast-2 
   version: "1.31"             # 안정적인 최신 버전
 

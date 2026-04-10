@@ -14,7 +14,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Megazone-Final/airline-eks.git
+    repoURL: git@github.com:Megazone-Final/airline-eks.git
     targetRevision: main
     path: services/payment
     helm:

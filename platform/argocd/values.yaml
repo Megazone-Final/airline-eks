@@ -22,7 +22,12 @@ authScripts:
   scripts:
     auth1.sh: |
       #!/bin/sh
-      aws ecr --region ap-northeast-2 get-authorization-token --output text --query 'authorizationData[].authorizationToken' | base64 -d
+      # Argo CD Image Updater expects a single-line "<username>:<password>" value.
+      printf 'AWS:%s' "$(aws ecr get-login-password --region ap-northeast-2)"
+
+extraEnv:
+  - name: HOME
+    value: /tmp
 
 serviceAccount:
   create: true
