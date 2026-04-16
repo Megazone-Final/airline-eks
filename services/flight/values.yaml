@@ -81,7 +81,7 @@ readinessProbe:
 autoscaling:
   enabled: true
   name: flight-hpa
-  minReplicas: 300
+  minReplicas: 380
   maxReplicas: 5000
   metrics:
     - type: Resource
