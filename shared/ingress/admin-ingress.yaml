@@ -11,6 +11,9 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:036333380579:certificate/083c5c21-28b8-410f-973a-99ba72bfc599
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+    alb.ingress.kubernetes.io/healthcheck-path: /argocd
+    alb.ingress.kubernetes.io/success-codes: "200,301,302"
 spec:
   ingressClassName: alb
   rules:
@@ -32,10 +35,14 @@ metadata:
   namespace: monitoring
   annotations:
     kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: airline-admin-group
+    alb.ingress.kubernetes.io/group.order: "20"
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: airline-admin-group
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+    alb.ingress.kubernetes.io/healthcheck-path: /grafana/login
+    alb.ingress.kubernetes.io/success-codes: "200,301,302"
 spec:
   ingressClassName: alb
   rules:
