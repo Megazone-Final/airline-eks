@@ -1,0 +1,26 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-non-payment-internal-reservations
+  namespace: airline-flight
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: svc-flight
+  action: DENY
+  rules:
+    - from:
+        - source:
+            notServiceAccounts:
+              - airline-payment/payment-sa
+      to:
+        - operation:
+            ports:
+              - "3000"
+            methods:
+              - POST
+            paths:
+              - /internal/reservations
