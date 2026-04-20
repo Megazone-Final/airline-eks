@@ -1,0 +1,14 @@
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: waypoint-access-log
+  namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  accessLogging:
+    - providers:
+        - name: envoy
+  metrics:
+    - providers:
+        - name: prometheus

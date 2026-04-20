@@ -30,6 +30,7 @@ metadata:
     Environment: prod
     Team: Indiana-Zones
     istio.io/dataplane-mode: ambient
+    istio.io/use-waypoint: waypoint
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 ---
@@ -41,6 +42,7 @@ metadata:
     Environment: prod
     Team: Indiana-Zones
     istio.io/dataplane-mode: ambient
+    istio.io/use-waypoint: waypoint
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 ---
@@ -52,5 +54,6 @@ metadata:
     Environment: prod
     Team: Indiana-Zones
     istio.io/dataplane-mode: ambient
+    istio.io/use-waypoint: waypoint
   annotations:
     argocd.argoproj.io/sync-wave: "2"
