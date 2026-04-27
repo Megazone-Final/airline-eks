@@ -1,6 +1,18 @@
 {{- if .Values.autoscaling.enabled }}
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
+{{- if .Values.autoscaling.authentication.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: {{ .Values.autoscaling.authentication.kind }}
+metadata:
+  name: {{ .Values.autoscaling.authentication.name }}
+  labels:
+    {{- include "flight.labels" . | nindent 4 }}
+spec:
+  podIdentity:
+    {{- toYaml .Values.autoscaling.authentication.podIdentity | nindent 4 }}
+---
+{{- end }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
 metadata:
   name: {{ include "flight.hpaName" . }}
   namespace: {{ include "flight.namespace" . }}
@@ -8,34 +20,11 @@ metadata:
     {{- include "flight.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
     name: {{ include "flight.deploymentName" . }}
-  minReplicas: {{ .Values.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
-  metrics:
-    {{- with .Values.autoscaling.metrics }}
-    {{- toYaml . | nindent 4 }}
-    {{- else }}
-    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
-    {{- end }}
-    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
-    {{- end }}
-    {{- end }}
-  {{- with .Values.autoscaling.behavior }}
-  behavior:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  pollingInterval: {{ .Values.autoscaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.autoscaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.autoscaling.minReplicaCount }}
+  maxReplicaCount: {{ .Values.autoscaling.maxReplicaCount }}
+  triggers:
+    {{- toYaml .Values.autoscaling.triggers | nindent 4 }}
 {{- end }}
