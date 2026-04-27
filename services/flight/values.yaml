@@ -105,9 +105,9 @@ autoscaling:
         query: |
           sum(
             rate(
-              istio_requests_total{
-                destination_workload_namespace="airline-flight",
-                destination_workload="flight"
+              http_requests_total{
+                service="flight",
+                route!~"/health|/readyz|/livez"
               }[1m]
             )
           )
