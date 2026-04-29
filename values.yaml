@@ -2,4 +2,4 @@
 
 image:
   tag: 1.1.0
-  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/auth
+  repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/payment
