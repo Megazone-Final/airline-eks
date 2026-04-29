@@ -11,7 +11,7 @@ container:
   name: flight
   port: 3000
 
-replicaCount: 375
+replicaCount: 2
 
 image:
   repository: 036333380579.dkr.ecr.ap-northeast-2.amazonaws.com/airline-backend/flight
@@ -101,7 +101,7 @@ autoscaling:
         awsRegion: ap-northeast-2
         identityOwner: operator
         metricName: flight_rps
-        threshold: "50"
+        threshold: "70"
         query: |
           sum(
             rate(
